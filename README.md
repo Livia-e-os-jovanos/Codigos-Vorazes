@@ -1,4 +1,4 @@
-# Codigos-Voraze
+# Codigos-Vorazes
 
 <h2>Descrição</h2>
 Trabalho requisitado pela disciplina de Estrutura de Dados, turma 2025.1 do curso de Análise e Desenvolvimento de Sistemas no IFBAIANO – Campus Guanambi. Este projeto consiste em uma biblioteca de funções inspiradas no universo de Jogos Vorazes, desenvolvida para praticar conceitos fundamentais de estruturas de dados.

@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#define MAXTRIBUTOS 15
+#define MAXTRIBUTOS 13
 #define MAXNOME 50
 
 void CadastrarTributo(int id);
@@ -122,9 +122,10 @@ bool validarIdade(int idade){
         return false;
     }
 }
-bool validarDistrito(int distrito){
+bool validarDistrito(int distrito)
+{
 
-    if(distrito > 0 && distrito <= 6)
+    if (distrito > 0 && distrito <= 6)
     {
         return true;
     }
@@ -133,12 +134,96 @@ bool validarDistrito(int distrito){
         return false;
     }
 }
-bool validarSexo(char sexo){
+bool validarSexo(char sexo)
+{
 
+    if (sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm')
+    {
+        return true;
+    }
+}
+void sortearTributos(int id)
+{
+    bool D1_fem = false;
+    bool D1_mas = false;
+    bool D2_fem = false;
+    bool D2_mas = false;
+    bool D3_fem = false;
+    bool D3_mas = false;
 
-    if(sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm')
+    int num_sorteado;
+    int Tributos[6];
+    int sorteados = 0;
+
+    bool usado[id];
+
+    for (int i = 0; i < id; i++) //verifica se uma pessoa já foi sorteada
+        usado[i] = false;
+
+    while (sorteados < 6)
+    {
+        num_sorteado = rand() % id; //aqui sorteia, o %id faz com que sorteie só numeros entre 0 e o ultimo "tributo"
+
+        if (usado[num_sorteado]) // se o tributo já foi sorteado, sorteia novamente
+            continue;
+
+        if (Distrito[num_sorteado] == 1) // isso aqui nem precisa explicar, é só ler aí ;)
         {
-            return true;
+            if (Sexo[num_sorteado] == 'm' && D1_mas == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D1_mas = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
+            else if (Sexo[num_sorteado] == 'f' && D1_fem == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D1_fem = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
+        }
+        if (Distrito[num_sorteado] == 2)
+        {
+            if (Sexo[num_sorteado] == 'm' && D2_mas == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D2_mas = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
+            else if (Sexo[num_sorteado] == 'f' && D2_fem == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D2_fem = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
+        }
+        if (Distrito[num_sorteado] == 3)
+        {
+            if (Sexo[num_sorteado] == 'm' && D3_mas == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D3_mas = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
+            else if (Sexo[num_sorteado] == 'f' && D3_fem == false)
+            {
+                Tributos[sorteados] = num_sorteado;
+                D3_fem = true;
+                usado[num_sorteado] = true;
+                sorteados++;
+            }
         }
 
+    }
+    printf("Tributos Sorteados: ");
+    for (int i = 0; i < 12; i++)
+    {
+       listarTributos(i);
+    }
+    printf("\n");
 }

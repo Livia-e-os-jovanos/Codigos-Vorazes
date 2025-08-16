@@ -6,9 +6,11 @@
 #define MAXNOME 50
 
 extern char Nome[MAXTRIBUTOS][MAXNOME], Sexo[MAXTRIBUTOS];
-extern int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS];
+extern int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS], QuantosMatou[MAXTRIBUTOS]; // garantir que tudo começa com zero em quantosMatou
 
 // aqui ficam os protótipos
 void removerTributo (int quemSai);
+
+void iniciarJogos (int Tributos[], int tamanho);
 
 #endif

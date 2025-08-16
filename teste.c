@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdlib.h>
 
-
-#define MAXTRIBUTOS 1
+#define MAXTRIBUTOS 15
 #define MAXNOME 50
 
 void CadastrarTributo(int id);
@@ -12,49 +12,57 @@ bool validarNome(char *nome);
 bool validarSexo(char sexo);
 bool validarIdade(int idade);
 bool validarDistrito(int distrito);
+void listarTributos(int id);
+
 
 char Nome[MAXTRIBUTOS][MAXNOME], Sexo[MAXTRIBUTOS];
-int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], id; 
-bool dadosValidos = true;
+int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS], id; 
 
+int tributosD1[MAXTRIBUTOS], tributosD2[MAXTRIBUTOS], tributosD3[MAXTRIBUTOS], tributosD4[MAXTRIBUTOS], tributosD5[MAXTRIBUTOS], tributosD6[MAXTRIBUTOS];
 
 int main(){
 
     int id = 0;
-    while(id <= MAXTRIBUTOS)
+    while(id < MAXTRIBUTOS)
     {
         CadastrarTributo(id);
         id++;
     }
+    sortearTributos(id);
+    id = 0;
+
+
+    while (id < MAXTRIBUTOS)
+    {
+        listarTributos(id);
+        id++;
+    }
+    
     
     return 0;
 }
 
-void CadastrarTributo(int id){ 
+void CadastrarTributo(int id)
+{ 
 
     int idade, distrito;
     char nome[MAXNOME], sexo;
 
 
-    printf("\nNome: ");
+    printf("Nome: ");
     scanf(" %49[^\n]", nome);
-    validarNome(nome);
 
 
     printf("Sexo: ");
     scanf(" %c", &sexo);
-    validarSexo(sexo);
 
     printf("Idade: ");
     scanf("%d", &idade);
-    validarIdade(idade);
 
 
     printf("Distrito: ");
     scanf("%d", &distrito);
 
-    validarDistrito(distrito);
-    
 
     if(validarDistrito(distrito) && validarIdade(idade) && validarNome(nome) && validarSexo(sexo))
     {
@@ -67,40 +75,41 @@ void CadastrarTributo(int id){
         }
 
         Nome[id][i] = '\0';
-
         
-
+        Id[id] = id;
         Idade[id] = idade;
         Distrito[id] = distrito;
         Sexo[id] = sexo;
-
         
-        printf("\nTributo Cadastrado com Sucesso!!");
-        //printf("\nNome: %s\nSexo: %c\nIdade: %d\nDistrito: %d\n", nome, sexo, Idade[id], Distrito[id]);
+        printf("\nTributo Cadastrado com Sucesso!!\n");
+        
     }
 
     else
     {
         printf("\nerro ao cadastrar tributo\n");
-    }
+    }    
+}
+
+void listarTributos(int id)
+{
+
+    printf("\nId: %d - Nome: %s - Sexo: %c - Idade: %d - Distrito: %d\n", Id[id], Nome[id], Sexo[id], Idade[id], Distrito[id]);
 
 
-    
 }
 bool validarNome(char *nome){ // segundo as regras do c, quando um vetor é utilizado como parametro em uma função ele automaticamente vira um ponteiro
 
-    if(strlen(nome) > 1){
-        for(int i = 0; i != '\0'; i++){
-            if(isalpha(nome[i]) || nome[i] == ' ')
-            {
+    if(strlen(nome) < 2) return false; //verifica se o nome possui mais que 2 digitos
+
+    for(int i = 0; nome[i] != '\0'; i++){ //lê a string
+        if(!isalpha(nome[i]) && nome[i] != ' ') //verifica se são caracters validos
+        {
                 return false;
-            }
         }
     }
-    else
-    {
-        return false;
-    }
+    return true;
+
 }
 bool validarIdade(int idade){
 
@@ -115,7 +124,7 @@ bool validarIdade(int idade){
 }
 bool validarDistrito(int distrito){
 
-    if(distrito > 0 && distrito <= 12)
+    if(distrito > 0 && distrito <= 6)
     {
         return true;
     }
@@ -126,15 +135,10 @@ bool validarDistrito(int distrito){
 }
 bool validarSexo(char sexo){
 
-    if(isalpha(sexo))
-    {
-        if(sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm')
+
+    if(sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm')
         {
             return true;
         }
-    }
-    else{
-        return false;
-    }
+
 }
-    

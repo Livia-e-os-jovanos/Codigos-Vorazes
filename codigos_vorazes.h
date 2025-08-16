@@ -9,6 +9,6 @@ extern char Nome[MAXTRIBUTOS][MAXNOME], Sexo[MAXTRIBUTOS];
 extern int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS];
 
 // aqui ficam os protótipos
-void removerTributo (int quemPerdeu);
+void removerTributo (int quemSai);
 
 #endif

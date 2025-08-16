@@ -23,6 +23,8 @@ int main() {
         }
     } else {
         sortearTributos(MAXTRIBUTOS);
+        iniciarJogos(Tributos, 6);
+
     }
 
     return 0;

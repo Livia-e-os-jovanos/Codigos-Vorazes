@@ -19,7 +19,10 @@ void listarTributos(int id);
 void sortearTributos(int id);
 
 char Nome[MAXTRIBUTOS][MAXNOME], Sexo[MAXTRIBUTOS];
-int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS], id;
+int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS], id, Tributos[6], forca;  
+
+
+/*===================================CADASTRAR===================================================*/
 
 void CadastrarTributo(int id)
 {
@@ -122,8 +125,7 @@ void sortearTributos(int total)
     bool D1_fem = false, D1_mas = false;
     bool D2_fem = false, D2_mas = false;
     bool D3_fem = false, D3_mas = false;
-
-    int Tributos[6];   
+ 
     int sorteados = 0;
     bool usado[MAXTRIBUTOS] = {false}; //nenhum tributo foi sprteado ainda
 
@@ -193,4 +195,138 @@ void sortearTributos(int total)
                Id[idx], Nome[idx], Sexo[idx], Idade[idx], Distrito[idx]);
     }
 
+}
+
+// Remove aquele que perdeu
+void removerTributo (int quemSai) { 
+    // vou receber quem perdeu (ID)
+    // aí eu tenho que colocar -1 em todas listas na parte dele
+    // -1 em int, X em char
+    
+    // salvo elas como variáveis também no .h
+    Nome[quemSai][0] = 'X';// tem que fzer com q quando encontre o X, entenda que pode sobrescrever
+    Nome[quemSai][1] = '\0'; // \0 representa pro C que chegou no fim da string e que não vai ter mais nenhum caractere
+    Sexo[quemSai] = 'X';
+    Idade[quemSai] = -1;
+
+    //livia reseta a lista de quantos matou?
+} 
+
+void iniciarJogos (int Tributos[], int tamanho) {
+
+    srand(time(NULL));
+    /* a função rand não gera números aleatórios, ela usa uma semente (algum 
+    valor do computador) como um ponto raíz para extrair os números.
+    srand é para alterar essa semente, então para aumentar a variancia, a
+    biblioteca time é incluída, com o valor NULL, que é uma constante que diz
+    para o computador não apontar para nada válido */
+
+    // preciso pegar na ordem que vem
+    //int i = 0, j = i + 1, maximo = 1;
+    int ganhador1, ganhador2, ganhador3, ganhador4, campeao; // rever nome dos finalistas
+    int numeroRandom = rand() % 2; // só retorna 0 ou 1
+    //Tributos[0] x Tributos[1]
+    if (numeroRandom == 0) {
+        // 0 ganhou 
+        // acredito que a lista de tributos vem com os IDs
+        forca[Tributos[0]]++;
+        removerTributo(Tributos[1]);
+        
+        ganhador1 = 0; // armazena para proxima batalha
+    } else {
+        // 1 ganhou 
+        forca[Tributos[1]]++;
+        removerTributo(Tributos[0]);
+        
+        ganhador1 = 1; // armazena para proxima batalha
+    }
+    
+    //Tributos[2] x Tributos[3]
+        if (numeroRandom == 0) {
+        // 2 ganhou 
+        forca[Tributos[2]]++;
+        removerTributo(Tributos[3]);
+        
+        ganhador2 = 2; // armazena para proxima batalha
+    } else {
+        // 3 ganhou 
+        forca[Tributos[3]]++;
+        removerTributo(Tributos[2]);
+        
+        ganhador2 = 3; // armazena para proxima batalha
+    }
+
+    //Tributos[4] x Tributos[5]
+    if (numeroRandom == 0) {
+        // 4 ganhou 
+        forca[Tributos[4]]++;
+        removerTributo(Tributos[5]);
+        
+        ganhador3 = 4; // armazena para proxima batalha
+    } else {
+        // 5 ganhou 
+        forca[Tributos[5]]++;
+        removerTributo(Tributos[4]);
+        
+        ganhador3 = 5; // armazena para proxima batalha
+    }
+
+    //Ganhador 1 x Ganhador 2
+    if (numeroRandom == 0) {
+        // ganhador 1 ganhou 
+        forca[Tributos[ganhador1]]++;
+        removerTributo(Tributos[ganhador2]);
+        
+        ganhador4 = ganhador1; // armazena para proxima batalha
+    } else {
+        // ganhador 2 ganhou 
+        forca[Tributos[ganhador2]]++;
+        removerTributo(Tributos[ganhador1]);
+        
+        ganhador4 = ganhador2; // armazena para proxima batalha
+    }
+
+    //ganhador 4 x ganhador 3
+    if (numeroRandom == 0) {
+        // ganhador 4 ganhou 
+        forca[Tributos[ganhador4]]++;
+        removerTributo(Tributos[ganhador3]);
+        
+        campeao = ganhador4; 
+    } else {
+        // ganhador 3 ganhou 
+        forca[Tributos[ganhador3]]++;
+        removerTributo(Tributos[ganhador4]);
+        
+        campeao = ganhador3; 
+    }
+
+    // campeao é removido?  
+    // criar uma lista com os tributos que serão removidos GEOVANNI
+    // removerTributo(Tributos[campeao]);
+
+    /*
+    duplicar a lista de quem foi sorteado
+    a força será linkada a essa lista duplicada e livia vai usar ela
+    */
+}
+
+void EstatisticaForca(int lista[6], int *qtdmin, int *qtdmax, float *qtdmedia) {
+    int soma= 0;
+     *qtdmin = forca[0]; // força do primeiro tributo
+    *qtdmax = forca[0]; // força do primeiro tributo
+
+    for (int i= 1; i <=6; i++) {
+        if (forca[i] < *qtdmin) { 
+            *qtdmin = forca[i]; //verifica se a forcaa e menor que a anterior
+
+        }
+        if (forca[i] > *qtdmax) { 
+            *qtdmax= forca[i]; // verifica se a forca e maior que a anterior
+
+        }
+         soma += forca[i]; //soma as forcas
+
+    }
+    *qtdmedia = soma/ 6.0; //calcula a media 
 }

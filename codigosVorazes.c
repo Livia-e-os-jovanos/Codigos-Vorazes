@@ -6,32 +6,22 @@
 #include <stdlib.h>
 #include <time.h>
 
-
-#define MAXTRIBUTOS 12
-#define MAXNOME 50
-
-void CadastrarTributo(int id);
-bool validarNome(char *nome);
-bool validarSexo(char sexo);
-bool validarIdade(int idade);
-bool validarDistrito(int distrito);
-void listarTributos(int id);
-void sortearTributos(int id);
-
+/* Variáveis globais definidas no .c */
 char Nome[MAXTRIBUTOS][MAXNOME], Sexo[MAXTRIBUTOS];
-int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS], id, Tributos[6], forca;  
+int Idade[MAXTRIBUTOS], Distrito[MAXTRIBUTOS], Id[MAXTRIBUTOS];
+int Tributos[6], sorteadosCopia[6];
+int forca[MAXTRIBUTOS], forca2[MAXTRIBUTOS] = {0}, *ptrFatalityPlace[5];
+int Campeoes[EDICOES] = {0}, edc = 0, eddc = 0, x = 0, DistritosCampeoes[EDICOES] = {0};
+char CampeoesNomes[EDICOES][MAXNOME];
 
-
-/*===================================CADASTRAR===================================================*/
-
+/*===================================CADASTRO===================================================*/
 void CadastrarTributo(int id)
 {
-
     int idade, distrito;
     char nome[MAXNOME], sexo;
 
     printf("Nome: ");
-    scanf(" %49[^\n]", nome);
+    scanf(" %49[^\n]", nome); // o %49 é para delimitar nomes até 49 digitos
 
     printf("Sexo: ");
     scanf(" %c", &sexo);
@@ -42,112 +32,89 @@ void CadastrarTributo(int id)
     printf("Distrito: ");
     scanf("%d", &distrito);
 
-    if (validarDistrito(distrito) && validarIdade(idade) && validarNome(nome) && validarSexo(sexo))
+    if (validarDistrito(distrito) && validarIdade(idade) && validarNome(nome) && validarSexo(sexo)) // so cadastra se todas as funções forem vdd
     {
-        int i = 0;
-        while (nome[i] != '\0' && i < MAXNOME - 1) /*armazena a string digitada no vetor Nomes;
-                                                Enquanto tiver caracters e estiver dentro do limite(MAXNOME), guarda dentro do vetor Nomes na posição id*/
-        {
-            Nome[id][i] = nome[i];
-            i++;
-        }
-
-        Nome[id][i] = '\0';
-
+        strcpy(Nome[id], nome);
         Id[id] = id;
         Idade[id] = idade;
         Distrito[id] = distrito;
         Sexo[id] = sexo;
-
+        forca[id] = 0;  //  isso aqui foi adicionado para resolver bug {Não tirar!!!!!} se foi sorte só Deus sabe
+        forca2[id] = 0; // isso tbm
         printf("\nTributo Cadastrado com Sucesso!!\n");
     }
-
     else
     {
-        printf("\nerro ao cadastrar tributo\n");
+        printf("\nErro ao cadastrar tributo\n");
     }
 }
 
-void listarTributos(int id)
-{
-
-    printf("\nId: %d - Nome: %s - Sexo: %c - Idade: %d - Distrito: %d\n", Id[id], Nome[id], Sexo[id], Idade[id], Distrito[id]);
-}
 bool validarNome(char *nome)
-{ // segundo as regras do c, quando um vetor é utilizado como parametro em uma função ele automaticamente vira um ponteiro
-
+{
     if (strlen(nome) < 2)
-        return false; // verifica se o nome possui mais que 2 digitos
+    {
+        return false;
+    }
 
     for (int i = 0; nome[i] != '\0'; i++)
-    {                                            // lê a string
-        if (!isalpha(nome[i]) && nome[i] != ' ') // verifica se são caracters validos
+    {
+        if (!isalpha(nome[i]) && nome[i] != ' ') // valida se os caracteres fazem parte do alfabeto ou se são espaço
         {
             return false;
         }
     }
     return true;
 }
+
 bool validarIdade(int idade)
 {
-
-    if (idade >= 12 && idade <= 18)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return idade >= 12 && idade <= 18; // o tributo tem que ter entre 12 e 18 anos
 }
+
 bool validarDistrito(int distrito)
 {
-
-    if (distrito > 0 && distrito <= 3)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return distrito > 0 && distrito <= 3; // só são válidos distritos 1-3
 }
+
 bool validarSexo(char sexo)
 {
-
-    if (sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm')
-    {
-        return true;
-    }
+    return sexo == 'F' || sexo == 'f' || sexo == 'M' || sexo == 'm'; // Verifica se os carac. de sexo são validos
 }
+
+void listarTributos(int id)
+{
+    printf("\nId: %d - Nome: %s - Sexo: %c - Idade: %d - Distrito: %d\n", Id[id], Nome[id], Sexo[id], Idade[id], Distrito[id]);
+}
+
+/*===================================SORTEIO===================================================*/
 void sortearTributos(int total)
 {
     bool D1_fem = false, D1_mas = false;
     bool D2_fem = false, D2_mas = false;
     bool D3_fem = false, D3_mas = false;
- 
-    int sorteados = 0;
-    bool usado[MAXTRIBUTOS] = {false}; //nenhum tributo foi sprteado ainda
 
-    srand(time(NULL));  // gera os num na sequencia aleatoria
+    int sorteados = 0;
+    bool usado[MAXTRIBUTOS] = {false};
+
+    srand(time(NULL));
 
     while (sorteados < 6)
     {
-        int num_sorteado = rand() % total; //aqui sorteia, o %id faz com que sorteie só numeros entre 0 e o ultimo "tributo"
-
+        int num_sorteado = rand() % total; // sorteia um numero entre 0 e o ultimo indice dos jovens cadastrados
         if (usado[num_sorteado])
-            continue;  //verifica se uma pessoa já foi sorteada
+        { // se o numero sorteado já foi usado sorteia outros até que sorteie um valido
+            continue;
+        }
 
-        
-        if (Distrito[num_sorteado] == 1)// isso aqui nem precisa explicar, é só ler aí ;)
+        if (Distrito[num_sorteado] == 1) // verifica se é do D1
         {
-            if ((Sexo[num_sorteado] == 'm' || Sexo[num_sorteado] == 'M') && !D1_mas)
+            if ((Sexo[num_sorteado] == 'M' || Sexo[num_sorteado] == 'm') && !D1_mas) // se for homem e nn tiver sorteado um homem do Distrito
             {
-                Tributos[sorteados++] = num_sorteado;
-                D1_mas = true;
+                Tributos[sorteados++] = num_sorteado; // adiciona no vetor de tributos que participarão dos jogos
+                D1_mas = true;                        // atualiza para que nn armazene novamente um tributo com as msm caract.
                 usado[num_sorteado] = true;
             }
-            else if ((Sexo[num_sorteado] == 'f' || Sexo[num_sorteado] == 'F') && !D1_fem)
+            else if ((Sexo[num_sorteado] == 'F' || Sexo[num_sorteado] == 'f') && !D1_fem)
             {
                 Tributos[sorteados++] = num_sorteado;
                 D1_fem = true;
@@ -156,13 +123,13 @@ void sortearTributos(int total)
         }
         else if (Distrito[num_sorteado] == 2)
         {
-            if ((Sexo[num_sorteado] == 'm' || Sexo[num_sorteado] == 'M') && !D2_mas)
+            if ((Sexo[num_sorteado] == 'M' || Sexo[num_sorteado] == 'm') && !D2_mas)
             {
                 Tributos[sorteados++] = num_sorteado;
                 D2_mas = true;
                 usado[num_sorteado] = true;
             }
-            else if ((Sexo[num_sorteado] == 'f' || Sexo[num_sorteado] == 'F') && !D2_fem)
+            else if ((Sexo[num_sorteado] == 'F' || Sexo[num_sorteado] == 'f') && !D2_fem)
             {
                 Tributos[sorteados++] = num_sorteado;
                 D2_fem = true;
@@ -171,13 +138,13 @@ void sortearTributos(int total)
         }
         else if (Distrito[num_sorteado] == 3)
         {
-            if ((Sexo[num_sorteado] == 'm' || Sexo[num_sorteado] == 'M') && !D3_mas)
+            if ((Sexo[num_sorteado] == 'M' || Sexo[num_sorteado] == 'm') && !D3_mas)
             {
                 Tributos[sorteados++] = num_sorteado;
                 D3_mas = true;
                 usado[num_sorteado] = true;
             }
-            else if ((Sexo[num_sorteado] == 'f' || Sexo[num_sorteado] == 'F') && !D3_fem)
+            else if ((Sexo[num_sorteado] == 'F' || Sexo[num_sorteado] == 'f') && !D3_fem)
             {
                 Tributos[sorteados++] = num_sorteado;
                 D3_fem = true;
@@ -186,147 +153,374 @@ void sortearTributos(int total)
         }
     }
 
-    
-    printf("\nTributos Sorteados na ordem do sorteio:\n");
+    printf("\n=================TRIBUTOS SORTEADOS=======================\n");
     for (int i = 0; i < 6; i++)
     {
         int idx = Tributos[i];
         printf("Id: %d - Nome: %s - Sexo: %c - Idade: %d - Distrito: %d\n",
                Id[idx], Nome[idx], Sexo[idx], Idade[idx], Distrito[idx]);
+        forca2[idx] = 0; // reseta força do torneio
     }
-
 }
 
-// Remove aquele que perdeu
-void removerTributo (int quemSai) { 
-    // vou receber quem perdeu (ID)
-    // aí eu tenho que colocar -1 em todas listas na parte dele
-    // -1 em int, X em char
-    
-    // salvo elas como variáveis também no .h
-    Nome[quemSai][0] = 'X';// tem que fzer com q quando encontre o X, entenda que pode sobrescrever
-    Nome[quemSai][1] = '\0'; // \0 representa pro C que chegou no fim da string e que não vai ter mais nenhum caractere
-    Sexo[quemSai] = 'X';
-    Idade[quemSai] = -1;
+/*===================================JOGOS===================================================*/
+// sobrescreve os dados de quem perde a batalha
+void removerTributo(int id)
+{
+    Nome[id][0] = 'X';
+    Nome[id][1] = '\0';
+    Sexo[id] = 'X';
+    Idade[id] = -1;
+}
 
-    //livia reseta a lista de quantos matou?
-} 
+void iniciarJogos()
+{
+    printf("\nQue comecem os jogos e que a sorte esteja sempre ao seu favor!\n");
+    int ganhador1, ganhador2, ganhador3, ganhador4, campeao;
+    int eliminado1, eliminado2, eliminado3, eliminado4, eliminado5;
+    int numeroRandom, batalha;
 
-void iniciarJogos (int Tributos[], int tamanho) {
+    // Jogo 1
+    printf("\n======================1º CANHÃO=============================\n");
 
-    srand(time(NULL));
-    /* a função rand não gera números aleatórios, ela usa uma semente (algum 
-    valor do computador) como um ponto raíz para extrair os números.
-    srand é para alterar essa semente, então para aumentar a variancia, a
-    biblioteca time é incluída, com o valor NULL, que é uma constante que diz
-    para o computador não apontar para nada válido */
+    // faz um sorteio entre 0 e 1
+    numeroRandom = rand() % 2;
 
-    // preciso pegar na ordem que vem
-    //int i = 0, j = i + 1, maximo = 1;
-    int ganhador1, ganhador2, ganhador3, ganhador4, campeao; // rever nome dos finalistas
-    int numeroRandom = rand() % 2; // só retorna 0 ou 1
-    //Tributos[0] x Tributos[1]
-    if (numeroRandom == 0) {
-        // 0 ganhou 
-        // acredito que a lista de tributos vem com os IDs
-        forca[Tributos[0]]++;
+    // verifica e armazena o ganhador do primeiro conflito
+    if (numeroRandom == 0)
+    {
+        ganhador1 = Tributos[0];
+    }
+    else
+    {
+        ganhador1 = Tributos[1];
+    }
+
+    // verifica e armazena o primeiro eliminado
+    if (ganhador1 == Tributos[0])
+    {
+        eliminado1 = Tributos[1];
+    }
+
+    else
+    {
+        eliminado1 = Tributos[0];
+    }
+
+    batalha = 0;
+    printf("\n%s(%d) matou %s(%d)\n", Nome[ganhador1], ganhador1, Nome[eliminado1], eliminado1);
+    localMorte(batalha);
+
+    if (numeroRandom == 0)
+    {
         removerTributo(Tributos[1]);
-        
-        ganhador1 = 0; // armazena para proxima batalha
-    } else {
-        // 1 ganhou 
-        forca[Tributos[1]]++;
+    }
+    else
+    {
         removerTributo(Tributos[0]);
-        
-        ganhador1 = 1; // armazena para proxima batalha
     }
-    
-    //Tributos[2] x Tributos[3]
-        if (numeroRandom == 0) {
-        // 2 ganhou 
-        forca[Tributos[2]]++;
+
+    forca[ganhador1]++;
+    /* é uma duplicata de força para possibilitar que os dados daqueles que morreram
+    sejam utilizados para fazer a estatistica do combate atual*/
+    forca2[ganhador1]++;
+
+    // Jogo 2
+    printf("\n======================2º CANHÃO=============================\n");
+
+    // faz um sorteio entre 0 e 1
+    numeroRandom = rand() % 2;
+
+    // verifica e armazena o ganhador do segundo conflito
+    if (numeroRandom == 0)
+    {
+        ganhador2 = Tributos[2];
+    }
+    else
+    {
+        ganhador2 = Tributos[3];
+    }
+
+    // verifica e armazena o segundo eliminado
+
+    if (ganhador2 == Tributos[2])
+    {
+        eliminado2 = Tributos[3];
+    }
+    else
+    {
+        eliminado2 = Tributos[2];
+    }
+
+    batalha = 1;
+    printf("\n%s(%d) matou %s(%d)\n", Nome[ganhador2], ganhador2, Nome[eliminado2], eliminado2);
+    localMorte(batalha);
+
+    // remove tributo eliminado
+    if (numeroRandom == 0)
+    {
         removerTributo(Tributos[3]);
-        
-        ganhador2 = 2; // armazena para proxima batalha
-    } else {
-        // 3 ganhou 
-        forca[Tributos[3]]++;
+    }
+    else
+    {
         removerTributo(Tributos[2]);
-        
-        ganhador2 = 3; // armazena para proxima batalha
     }
 
-    //Tributos[4] x Tributos[5]
-    if (numeroRandom == 0) {
-        // 4 ganhou 
-        forca[Tributos[4]]++;
+    forca[ganhador2]++;
+    /* é uma duplicata de força para possibilitar que os dados daqueles que morreram
+    sejam utilizados para fazer a estatistica do combate atual*/
+    forca2[ganhador2]++;
+
+    // Jogo 3
+    printf("\n======================3º CANHÃO=============================\n");
+
+    // faz um sorteio entre 0 e 1
+    numeroRandom = rand() % 2;
+
+    // verifica e armazena o ganhador do terceiro conflito
+    if (numeroRandom == 0)
+    {
+        ganhador3 = Tributos[4];
+    }
+    else
+    {
+        ganhador3 = Tributos[5];
+    }
+
+    // verifica e armazena o terceiro elimianado
+    if (ganhador3 == Tributos[4])
+    {
+        eliminado3 = Tributos[5];
+    }
+    else
+    {
+        eliminado3 = Tributos[4];
+    }
+
+    batalha = 2;
+    printf("\n%s(%d) matou %s(%d)\n", Nome[ganhador3], ganhador3, Nome[eliminado3], eliminado3);
+    localMorte(batalha);
+
+    // remove tributo eliminado
+    if (numeroRandom == 0)
+    {
         removerTributo(Tributos[5]);
-        
-        ganhador3 = 4; // armazena para proxima batalha
-    } else {
-        // 5 ganhou 
-        forca[Tributos[5]]++;
+    }
+    else
+    {
         removerTributo(Tributos[4]);
-        
-        ganhador3 = 5; // armazena para proxima batalha
     }
 
-    //Ganhador 1 x Ganhador 2
-    if (numeroRandom == 0) {
-        // ganhador 1 ganhou 
-        forca[Tributos[ganhador1]]++;
-        removerTributo(Tributos[ganhador2]);
-        
-        ganhador4 = ganhador1; // armazena para proxima batalha
-    } else {
-        // ganhador 2 ganhou 
-        forca[Tributos[ganhador2]]++;
-        removerTributo(Tributos[ganhador1]);
-        
-        ganhador4 = ganhador2; // armazena para proxima batalha
+    forca[ganhador3]++;
+    /* é uma duplicata de força para possibilitar que os dados daqueles que morreram
+    sejam utilizados para fazer a estatistica do combate atual*/
+    forca2[ganhador3]++;
+
+    // Semifinal
+    printf("\n======================4º CANHÃO=============================\n");
+
+    // faz um sorteio entre 0 e 1
+    numeroRandom = rand() % 2;
+
+    // verifica e armazena o ganhador do quarto conflito
+    if (numeroRandom == 0)
+    {
+        ganhador4 = ganhador1;
+    }
+    else
+    {
+        ganhador4 = ganhador2;
     }
 
-    //ganhador 4 x ganhador 3
-    if (numeroRandom == 0) {
-        // ganhador 4 ganhou 
-        forca[Tributos[ganhador4]]++;
-        removerTributo(Tributos[ganhador3]);
-        
-        campeao = ganhador4; 
-    } else {
-        // ganhador 3 ganhou 
-        forca[Tributos[ganhador3]]++;
-        removerTributo(Tributos[ganhador4]);
-        
-        campeao = ganhador3; 
+    // verifica e armazena o quarto eliminado
+    if (ganhador4 == ganhador1)
+    {
+        eliminado4 = ganhador2;
+    }
+    else
+    {
+        eliminado4 = ganhador1;
     }
 
-    // campeao é removido?  
-    // criar uma lista com os tributos que serão removidos GEOVANNI
-    // removerTributo(Tributos[campeao]);
+    batalha = 3;
+    printf("\n%s(%d) matou %s(%d)\n", Nome[ganhador4], ganhador4, Nome[eliminado4], eliminado4);
+    localMorte(batalha);
 
-    /*
-    duplicar a lista de quem foi sorteado
-    a força será linkada a essa lista duplicada e livia vai usar ela
-    */
+    // remove btributo eliminado
+    if (numeroRandom == 0)
+    {
+        removerTributo(ganhador2);
+    }
+    else
+    {
+        removerTributo(ganhador1);
+    }
+
+    forca[ganhador4]++;
+    /* é uma duplicata de força para possibilitar que os dados daqueles que morreram
+    sejam utilizados para fazer a estatistica do combate atual*/
+    forca2[ganhador4]++;
+
+    // Final
+    printf("\n======================5º CANHÃO=============================\n");
+
+    // faz um sorteio entre 0 e 1
+    numeroRandom = rand() % 2;
+
+    // verifica e armazena o ganhador do último conflito
+    if (numeroRandom == 0)
+    {
+        campeao = ganhador4;
+    }
+    else
+    {
+        campeao = ganhador3;
+    }
+
+    // verifica e armazena o último iliminado
+    if (campeao == ganhador4)
+    {
+        eliminado5 = ganhador3;
+    }
+    else
+    {
+        eliminado5 = ganhador4;
+    }
+
+    batalha = 4;
+    printf("\n%s(%d) matou %s(%d)\n", Nome[campeao], campeao, Nome[eliminado5], eliminado5);
+
+    localMorte(batalha);
+
+    // remove tributo eliminado
+    if (numeroRandom == 0)
+    {
+        removerTributo(ganhador3);
+    }
+    else
+    {
+        removerTributo(ganhador4);
+    }
+
+    forca[campeao]++;
+    /* é uma duplicata de força para possibilitar que os dados daqueles que morreram
+    sejam utilizados para fazer a estatistica do combate atual*/
+    forca2[campeao]++;
+
+    Campeoes[edc++] = campeao;                     // guarda o id de cada campeao
+    strcpy(CampeoesNomes[x++], Nome[campeao]);     // guarda o nome do campeao de cada edição
+    DistritosCampeoes[eddc++] = Distrito[campeao]; // guarda o distrito  campeoes
+
+    printf("\n======================== CAMPEÃO===========================\n");
+    printf("%s, distrito %d\n", Nome[campeao], Distrito[campeao]);
 }
 
-void EstatisticaForca(int lista[6], int *qtdmin, int *qtdmax, float *qtdmedia) {
-    int soma= 0;
-     *qtdmin = forca[0]; // força do primeiro tributo
-    *qtdmax = forca[0]; // força do primeiro tributo
+/*===================================ESTATÍSTICA===================================================*/
+void estatisticaForca()
+{
+    printf("\n=============Força dos tributos neste torneio===============\n");
 
-    for (int i= 1; i <=6; i++) {
-        if (forca[i] < *qtdmin) { 
-            *qtdmin = forca[i]; //verifica se a forcaa e menor que a anterior
+    int soma = 0;
+    int maior = forca2[Tributos[0]];
+    int menor = forca2[Tributos[0]];
 
+    for (int i = 0; i < 6; i++)
+    {
+        int id = Tributos[i];
+        int *ptr = &forca2[id]; // ponteiro para a força do tributo
+
+        printf("Tributo %d: %d\n", id, *ptr);
+
+        soma += *ptr;
+
+        if (*ptr > maior)
+        {
+            maior = *ptr;
+        } // valor guardado na posiç~o da memória apontado com ponteiro
+
+        if (*ptr < menor)
+        {
+            menor = *ptr;
         }
-        if (forca[i] > *qtdmax) { 
-            *qtdmax= forca[i]; // verifica se a forca e maior que a anterior
-
-        }
-         soma += forca[i]; //soma as forcas
-
     }
-    *qtdmedia = soma/ 6.0; //calcula a media 
+
+    float media = (float)soma / 6;
+
+    printf("\n=======================Estatísticas========================\n"); // Mostra os resultados de maior,menor e a média de força entre os tributos do torneio
+    printf("Maior força: %d\n", maior);
+    printf("Menor força: %d\n", menor);
+    printf("Média das forças: %.2f\n\n", media);
+}
+
+void localMorte(int batalha) // local da morte de cada tributo definida por sorteioo
+{
+
+    int localSort;
+    int localMorte1 = 0, localdaMorte2 = 1, localdaMorte3 = 2, localdaMorte4 = 3, localdaMorte5 = 4; // Esses são os cinco cenários possíveis de morte
+
+    localSort = rand() % 5; // aqui é sorteado um número que vai definir qual será o local da morte
+    if (localSort == 0)
+    {
+        ptrFatalityPlace[batalha] = &localMorte1; // o ponteiro ptrFatalityPlace armazena o endereço da variavel sorteada
+                                                  // Que supostamente é a coordenada do local da morte
+    }
+    else if (localSort == 1)
+    {
+        ptrFatalityPlace[batalha] = &localdaMorte2;
+    }
+    else if (localSort == 2)
+    {
+        ptrFatalityPlace[batalha] = &localdaMorte3;
+    }
+    else if (localSort == 3)
+    {
+        ptrFatalityPlace[batalha] = &localdaMorte4;
+    }
+    else
+    {
+        ptrFatalityPlace[batalha] = &localdaMorte5;
+    }
+
+    printf("Coordenada da morte: %p\n\n", ptrFatalityPlace[batalha]);
+}
+/*===================================MAIOR DISTRITO===================================================*/
+int contarDistrito() // define o distrito campeão dos jogos
+{
+    int i = 0;
+    int D1 = 0, D2 = 0, D3 = 0;
+
+    for (i = 0; i < eddc; i++)
+    { // edcc guarda quantos tributos campeões cada distrito tem
+        if (DistritosCampeoes[i] == 1)
+        {
+            D1++; // vai contando o ínidce do tributo que representa o seu distrito
+        }
+        else if (DistritosCampeoes[i] == 2)
+        {
+            D2++;
+        }
+        else
+        {
+            D3++;
+        }
+    }
+    // Faz a verificação de qual é o distrito com a maior quant de venc.
+    if (D1 > D2 && D1 > D3)
+    {
+        return D1;
+    }
+    else if (D2 > D3)
+    {
+        printf("Distrito com mais vencedores: %d", D2);
+        return D2;
+    }
+    else if (D1 == D2 || D2 == D3 || D1 == D3)
+    {
+        return (-1); // mando para a main para identificar que foi empate
+    }
+    else
+    {
+        printf("Distrito com mais vencedores: %d", D3);
+        return D3;
+    }
 }

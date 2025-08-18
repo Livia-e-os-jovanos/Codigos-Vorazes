@@ -39,7 +39,7 @@ void CadastrarTributo(int id)
         Idade[id] = idade;
         Distrito[id] = distrito;
         Sexo[id] = sexo;
-        forca[id] = 0;  //  isso aqui foi adicionado para resolver bug {Não tirar!!!!!} se foi sorte só Deus sabe
+        forca[id] = 0;  //  isso aqui foi adicionado para resolver bug
         forca2[id] = 0; // isso tbm
         printf("\nTributo Cadastrado com Sucesso!!\n");
     }

@@ -13,14 +13,34 @@ Trabalho requisitado pela disciplina de Estrutura de Dados, turma 2025.1 do curs
 
 <h2>Funcionalidades</h2>
 
-  inserirTributo(nome,sexo, idade, distrito) – adiciona um tributo à lista, validando idade mínima.
-
+  CadastrarTributo(id) – recebe os dados de nome, idade, sexo e distrito do tributo e adiciona um tributo à lista.
+    validarNome(*nome) - verifica se o nome foi digitado, se é menor que duas letras e valida se as letras estão no alfabeto.
+    validarIdade(idade) - verifica se o tributo segue os requisitos de idade.
+    validarDistrito(distrito) - verifica se é um distrito válido.
+    validarSexo(sexo) - verifica se é valido.
+    
   listarTributos() – exibe todos os tributos cadastrados.
 
-  atualizarTributo(nome) – atualiza informações de um tributo existente.
+  sortearTributos(total) – sorteia tributos para participar dos jogos.
 
-  removerTributo(nome) – remove um tributo caso ele tenha vencido ou morrido no jogo.
+  removerTributo(id) – remove um tributo caso ele tenha morrido no jogo.
 
-  mostrar(nome) – mostra informações detalhadas de um tributo específico.
+  iniciarJogos() – dá início as batalhas entre tributos.
+
+  estatisticaForca() - faz a média de força do jogo que ocorreu, exibindo máxima, mínima e média.
+
+  localMorte(batalha) - exibe as coordenadas do campo de batalha em que ocorreu uma morte.
+
+  contarDistrito() - define o distrito que teve mais campeões.
+
+<h2>Como executar o projeto:</h2>
+
+  Vá até a pasta em que os arquivos estão localizados, abra o terminal e execute:
+
+  ```
+  gcc codigosVorazes.c main.c -o app
+
+  ./app
+```
 
 <b>Que a sorte esteja sempre com você! </b> 🍀🏹

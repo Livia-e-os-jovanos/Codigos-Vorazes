@@ -14,10 +14,14 @@ Trabalho requisitado pela disciplina de Estrutura de Dados, turma 2025.1 do curs
 <h2>Funcionalidades</h2>
 
   CadastrarTributo(id) – recebe os dados de nome, idade, sexo e distrito do tributo e adiciona um tributo à lista.
-    validarNome(*nome) - verifica se o nome foi digitado, se é menor que duas letras e valida se as letras estão no alfabeto.
-    validarIdade(idade) - verifica se o tributo segue os requisitos de idade.
-    validarDistrito(distrito) - verifica se é um distrito válido.
-    validarSexo(sexo) - verifica se é valido.
+  
+  validarNome(*nome) - verifica se o nome foi digitado, se é menor que duas letras e valida se as letras estão no alfabeto.
+    
+  validarIdade(idade) - verifica se o tributo segue os requisitos de idade.
+  
+  validarDistrito(distrito) - verifica se é um distrito válido.
+  
+  validarSexo(sexo) - verifica se é valido.
     
   listarTributos() – exibe todos os tributos cadastrados.
 
